@@ -1,0 +1,28 @@
+
+Vagrant.configure("2") do |config|
+
+  config.vm.box = "centos/7"
+  config.vm.box_check_update = false
+
+  # HTTP port
+  config.vm.network "forwarded_port", guest: 80, host: 8033
+
+  config.vm.hostname = "master"
+  config.vm.network "private_network", ip: "192.168.10.10"
+
+  # config.vm.synced_folder "../data", "/vagrant_data"
+
+  config.vm.provision "shell", inline: <<-SHELL
+    sudo yum -y update
+    # Switch to root user
+    sudo su -
+    # Reboot the system
+    reboot
+    # Install the necessary packages
+    yum install -y wget git zile nano net-tools docker-1.13.1 bind-utils iptables-services bridge-utils bash-completion kexec-tools sos psacct openssl-devel httpd-tools NetworkManager python-cryptography python2-pip python-devel python-passlib java-1.8.0-openjdk-headless "@Development Tools"
+    
+    # rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    # yum -y install nginx && yum clean all && rm -rf /var/cache/yum
+    # sudo systemctl start nginx
+  SHELL
+end
